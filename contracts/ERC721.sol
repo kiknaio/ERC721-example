@@ -77,12 +77,22 @@ contract ERC721 {
      */
     function approve(address to, uint256 tokenId) public {
         address owner = ownerOf(tokenId);
+        // Only owner or approvedAll address can approve specific tokenId
         require(
-            owner == msg.sender,
+            owner == msg.sender || isApprovedForAll(owner, msg.sender),
             "Only the owner can approve another address"
         );
 
         _tokenApprovals[tokenId] = to;
         emit Approval(owner, to, tokenId);
+    }
+
+    /**
+     * @dev Checks if an address is approved to manage a specific token ID.
+     * @param tokenId The ID of the token to check if approved.
+     */
+    function getApproved(uint256 tokenId) public view returns (address) {
+        require(_owners[tokenId] != address(0), "Token ID not found");
+        return _tokenApprovals[tokenId];
     }
 }
