@@ -151,6 +151,12 @@ contract ERC721 {
         );
     }
 
+    /**
+     * @dev Transfers the ownership of a token ID from one address to another.
+     * @param from The address which owns the token ID.
+     * @param to The address which will own the token ID.
+     * @param tokenId The ID of the token to transfer.
+     */
     function safeTransferFrom(
         address from,
         address to,
@@ -166,5 +172,17 @@ contract ERC721 {
         bytes memory _data
     ) private pure returns (bool) {
         return true;
+    }
+
+    // EIP165: Query if a contract implements another interface
+    function supportsInterface(bytes4 interfaceId)
+        public
+        pure
+        virtual
+        returns (bool)
+    {
+        // Check if the interface is implemented
+        // I.E. Opensea uses it to check if the contract is compatible with ERC721
+        return interfaceId == 0x80ac58cd;
     }
 }
