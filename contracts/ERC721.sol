@@ -130,4 +130,41 @@ contract ERC721 {
 
         emit Transfer(from, to, tokenId);
     }
+
+    /**
+     * @dev Transfers the ownership of a token ID from one address to another.
+     * @param from The address which owns the token ID.
+     * @param to The address which will own the token ID.
+     * @param tokenId The ID of the token to transfer.
+     * @param _data The ID of the token to transfer.
+     */
+    function safeTransferFrom(
+        address from,
+        address to,
+        uint256 tokenId,
+        bytes memory _data
+    ) public {
+        transferFrom(from, to, tokenId);
+        require(
+            _checkOnERC721Received(from, tokenId, _data),
+            "Receiver not implemented"
+        );
+    }
+
+    function safeTransferFrom(
+        address from,
+        address to,
+        uint256 tokenId
+    ) public {
+        safeTransferFrom(from, to, tokenId, "");
+    }
+
+    // @notice Check if the receiver is implemented
+    function _checkOnERC721Received(
+        address from,
+        uint256 tokenId,
+        bytes memory _data
+    ) private pure returns (bool) {
+        return true;
+    }
 }
