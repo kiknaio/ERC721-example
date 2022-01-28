@@ -24,6 +24,11 @@ contract ERC721 {
         uint256 tokens
     );
 
+    /**
+     * @dev This event is emitted when a token is transfered to another address.
+     */
+    event Transfer(address indexed from, address indexed to, uint256 tokens);
+
     mapping(address => uint256) internal _balances;
     mapping(uint256 => address) internal _owners;
     mapping(address => mapping(address => bool)) private _operatorApprovals;
@@ -94,5 +99,35 @@ contract ERC721 {
     function getApproved(uint256 tokenId) public view returns (address) {
         require(_owners[tokenId] != address(0), "Token ID not found");
         return _tokenApprovals[tokenId];
+    }
+
+    /**
+     * @dev Transfers the ownership of a token ID from one address to another.
+     * @param from The address which owns the token ID.
+     * @param to The address which will own the token ID.
+     * @param tokenId The ID of the token to transfer.
+     */
+    function transferFrom(
+        address from,
+        address to,
+        uint256 tokenId
+    ) public {
+        address owner = ownerOf(tokenId);
+        require(
+            msg.sender == owner ||
+                getApproved(tokenId) == msg.sender ||
+                isApprovedForAll(owner, msg.sender),
+            "Msg.sender is not the owner or approved"
+        );
+        require(owner == from, "From address is not the owner");
+        require(to != address(0), "To address is zero");
+        require(_owners[tokenId] != address(0), "Token ID not found");
+
+        approve(address(0), tokenId);
+        _balances[from] -= 1;
+        _balances[to] += 1;
+        _owners[tokenId] = to;
+
+        emit Transfer(from, to, tokenId);
     }
 }
